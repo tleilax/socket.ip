@@ -1,0 +1,5 @@
+pluginname=Socket.IP
+pluginclassname=SocketIP
+origin=core
+version=1.0
+studipMinVersion=3.1

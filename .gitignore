@@ -1,0 +1,4 @@
+assets/*.css
+composer.lock
+bower_components/*
+vendor/*

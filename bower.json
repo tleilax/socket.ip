@@ -1,0 +1,18 @@
+{
+  "name": "SocketIP",
+  "version": "0.0.0",
+  "authors": [
+    "Jan-Hendrik Willms <tleilax+github@gmail.com>"
+  ],
+  "license": "WTFPL",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "autobahn": "~0.9.6"
+  }
+}
