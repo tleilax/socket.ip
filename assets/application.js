@@ -37,6 +37,7 @@
 
                 session.subscribe('studip.chat', function onevent(args) {
                     output.append(args[0].trim() + "\n");
+                    output[0].scrollTop = output[0].scrollHeight;
                 });
             };
             
