@@ -1,4 +1,4 @@
-    <?php
+<?php
     require __DIR__ . '/vendor/autoload.php';
 
     use Thruway\ClientSession;
@@ -14,7 +14,7 @@
         };
         $session->subscribe('studip.chat', $onevent);
         // 2) publish an event
-        $session->publish('studip.chat', ['Hello, world from PHP!!!'], [], ["acknowledge" => true])->then(
+        $session->publish('studip.chat', ['Hello, world from PHP!!!'], [], ['acknowledge' => true])->then(
             function () {
                 echo "Publish Acknowledged!\n";
             },
@@ -23,5 +23,8 @@
                 echo "Publish Error {$error}\n";
             }
         );
+    });
+    $client->on('close', function (ClientSession $session) {
+        $session->publish('studip.chat', ['See ya!'], [], ['acknowledge' => true]);
     });
     $client->start();

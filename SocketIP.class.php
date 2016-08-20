@@ -17,7 +17,7 @@ class SocketIP extends StudIPPlugin implements SystemPlugin {
 
         $navigation = new AutoNavigation(_('Socket.IP'));
         $navigation->setURL(PluginEngine::GetURL($this, array(), 'show'));
-        $navigation->setImage(Assets::image_path('blank.gif'));
+        $navigation->setImage($this->getPluginURL() . '/assets/socket.svg');
         Navigation::addItem('/socketip', $navigation);
     }
 

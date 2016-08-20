@@ -1,4 +1,8 @@
-(function ($, STUDIP) {
+/*jslint browser: true, devel: true */
+/*global jQuery, STUDIP, autobahn */
+(function ($, STUDIP, autobahn) {
+    'use strict';
+
     STUDIP.Sockets = {};
     STUDIP.Sockets.server = 'ws://127.0.0.1:8080';
 
@@ -6,10 +10,15 @@
         $('[data-chat]').each(function () {
             var realm = $(this).data().realm || 'default',
                 input = $(this).data().chat,
-                output = $(this),
+                output = (function (container) {
+                    return function (message) {
+                        $(container).append(message.trim() + "\n");
+                        container.scrollTop = container.scrollHeight;
+                    };
+                }(this)),
                 connection;
 
-            $(input).attr('disabled', true);
+            $(input).prop('disabled', true);
 
             connection = new autobahn.Connection({
                 url: STUDIP.Sockets.server,
@@ -18,9 +27,9 @@
             });
 
             connection.onopen = function (session) {
-                $(input).attr('disabled', false).keypress(function (event) {
+                $(input).prop('disabled', false).keypress(function (event) {
                     var message = $(this).val().trim();
-        
+
                     if (event.keyCode === 27) {
                         $(this).val('');
                     }
@@ -29,24 +38,38 @@
                         return;
                     }
 
-                    output.append(message + "\n");
+                    output(message);
                     session.publish('studip.chat', [message]);
 
                     $(this).val('');
                 });
 
                 session.subscribe('studip.chat', function onevent(args) {
-                    output.append(args[0].trim() + "\n");
-                    output[0].scrollTop = output[0].scrollHeight;
+                    output(args[0]);
                 });
             };
-            
-            connection.onclose = function () {
-                console.log('Error', arguments);
+
+            connection.onclose = function (reason, details) {
+                if (reason === 'unreachable') {
+                    output('unable to connect');
+                    return details.will_retry;
+                }
+
+                if (reason === 'closed') {
+                    $(input).prop('disabled', true).blur();
+                    output('server closed the connection');
+                    return false;
+                }
+
+                if (reason === 'lost' || !details.will_retry) {
+                    $(input).prop('disabled', true).blur();
+                    output('connection lost');
+                    return false;
+                }
             };
 
             connection.open();
         });
     });
-}(jQuery, STUDIP));
+}(jQuery, STUDIP, autobahn));
 
